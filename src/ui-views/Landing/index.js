@@ -21,7 +21,7 @@ import appRoutes from "../../ui-config/routes/mihy";
 import styles from "./css";
 import {compose} from "recompose";
 import {connect} from "react-redux";
-import {logout} from "../../ui-redux/auth/actions";
+import {logout} from "mihy-ui-framework/ui-redux/auth/actions";
 
 
 class Landing extends React.Component {
