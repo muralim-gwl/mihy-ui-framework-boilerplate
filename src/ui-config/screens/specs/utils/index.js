@@ -1,283 +1,276 @@
 import {
-  getLabel,
-  getTextField,
-  getCommonSubHeader
+  getCommonCard,
+  getLabel
 } from "mihy-ui-framework/ui-config/screens/specs/utils";
 import "./index.css";
 
-import { getQueryArg } from "mihy-ui-framework/ui-utils/commons";
-import { handleScreenConfigurationFieldChange as handleField } from "mihy-ui-framework/ui-redux/screen-configuration/actions";
-import get from "lodash/get";
+const appOptionCardIconBoxStyle = (
+  colorOne = "#ffa726",
+  colorTwo = "#fb8c00"
+) => {
+  return {
+    color: "#FFFFFF",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "48px",
+    width: "48px",
+    zIndex: 1000000,
+    padding: "15px",
+    marginTop: "-36px",
+    marginRight: "15px",
+    borderRadius: "3px",
+    background: `linear-gradient(60deg,${colorOne} ,${colorTwo} )`,
+    boxShadow: "0 1px 4px 0 rgba(0, 0, 0, 0.14)"
+  };
+};
 
-const queryValue = getQueryArg(window.location.href, "purpose");
+export const getFormCommonCard=({iconName="",header="",iconColorOne="",iconColorTwo="",children={},gridDefination={ xs: 12, sm:12 },cardProps})=>{
+  return {
+    ...getCommonCard({
+      iconDiv: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        props: {
+          style: appOptionCardIconBoxStyle(iconColorOne, iconColorTwo)
+        },
+        children: {
+          icon: {
+            uiFramework: "custom-atoms",
+            componentPath: "Icon",
+            props: {
+              iconName,
+              size: "36px"
+            }
+          }
+        },
+        gridDefination: {
+          xs: 4,
+          align: "left"
+        }
+      },
+      ...children
+    },cardProps),
+    gridDefination
+  }
+}
 
-export const getTooltip = (children, toolTipProps) => {
+export const appOptionCardWithIcon = (
+  label,
+  iconName,
+  iconColorOne,
+  iconColorTwo,
+  onClickDefination={},
+  gridDefination = { xs: 12, sm: 6 }
+) => {
   return {
     uiFramework: "custom-atoms",
-    componentPath: "Div",
+    componentPath: "Item",
+    props: {
+      ...gridDefination
+    },
     children: {
-      label: children,
-      toolTip: {
-        componentPath: "Tooltip",
-        props: { ...toolTipProps },
-        children: {
+      appCard: getCommonCard({
+        appOptionContainer: {
           uiFramework: "custom-atoms",
-          componentPath: "Icon",
+          componentPath: "Container",
+          children: {
+            iconDiv: {
+              uiFramework: "custom-atoms",
+              componentPath: "Div",
+              props: {
+                style: appOptionCardIconBoxStyle(iconColorOne, iconColorTwo)
+              },
+              children: {
+                icon: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Icon",
+                  props: {
+                    iconName,
+                    size: "36px"
+                  }
+                }
+              },
+              gridDefination: {
+                xs: 4,
+                align: "left"
+              }
+            },
+            cardLabel: {
+              componentPath: "Typography",
+              props: {
+                variant: "headline"
+              },
+              children: {
+                optionName: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Label",
+                  props: {
+                    label
+                  }
+                }
+              },
+              gridDefination: {
+                xs: 8,
+                align: "right"
+              }
+            }
+          },
+          onClickDefination
+        }
+      })
+    }
+  };
+};
+
+export const appOptionsCardsWithIcons = apps => {
+  return {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    children: apps.reduce((acc, obj, index) => {
+      const { displayLabel, iconName, iconColorOne, iconColorTwo,onClickDefination } = obj;
+      acc[`app${index}`] = appOptionCardWithIcon(
+        displayLabel,
+        iconName,
+        iconColorOne,
+        iconColorTwo,
+        onClickDefination
+      );
+      return acc;
+    }, {})
+  };
+};
+
+const appCardIconBoxStyle = (colorOne = "#ffa726", colorTwo = "#fb8c00") => {
+  return {
+    color: "#FFFFFF",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "90px",
+    padding: "15px",
+    marginTop: "-36px",
+    borderRadius: "3px",
+    background: `linear-gradient(60deg,${colorOne} ,${colorTwo} )`,
+    boxShadow: "0 1px 4px 0 rgba(0, 0, 0, 0.14)"
+  };
+};
+
+export const getApps = app => {
+  const {name,onClickDefination}=app;
+  return {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color:"primary"
+    },
+    children: {[name]:getLabel({label:name})},
+    onClickDefination
+  };
+};
+
+export const appCardWithIcon = (
+  label,
+  iconName,
+  iconColorOne,
+  iconColorTwo,
+  apps,
+  onClickDefination,
+  gridDefination = { xs: 12, sm: 6 }
+) => {
+  return {
+    uiFramework: "custom-atoms",
+    componentPath: "Item",
+    props: {
+      ...gridDefination
+    },
+    children: {
+      appCard: getCommonCard({
+        appContainer: {
+          uiFramework: "custom-atoms",
+          componentPath: "Container",
+          children: {
+            iconDiv: {
+              uiFramework: "custom-atoms",
+              componentPath: "Div",
+              props: {
+                style: appCardIconBoxStyle(iconColorOne, iconColorTwo),
+                className: "mihy-image"
+              },
+              children: {
+                icon: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Icon",
+                  props: {
+                    iconName,
+                    size: "36px"
+                  }
+                }
+              },
+              gridDefination: {
+                xs: 12
+              }
+            },
+            cardLabel: {
+              componentPath: "Typography",
+              props: {
+                variant: "headline"
+              },
+              children: {
+                optionName: {
+                  uiFramework: "custom-atoms",
+                  componentPath: "Label",
+                  props: {
+                    label
+                  }
+                }
+              },
+              gridDefination: {
+                xs: 12,
+                align: "center"
+              }
+            },
+            apps: {
+              uiFramework: "custom-atoms",
+              componentPath: "Div",
+              children: apps.reduce((acc, app, index) => {
+                acc[`app${index}`] = getApps(app);
+                return acc;
+              }, {}),
+              gridDefination: {
+                xs: 12,
+                align: "center"
+              }
+            }
+          },
           props: {
-            iconName: "info"
+            className: "mihy-image-container"
           }
         }
-      }
+      })
     }
   };
 };
 
-export const getCheckbox = (content, props = {}) => {
-  return {
-    uiFramework: "custom-atoms-local",
-    componentPath: "Checkbox",
-    props: {
-      content,
-      ...props
-    }
-  };
-};
-
-export const getUploadFile = {
-  uiFramework: "custom-molecules",
-  componentPath: "DocumentList",
-  props: {
-    documents: [
-      {
-        name: "Upload Document"
-      }
-    ]
-  }
-};
-
-export const getUploadFilesMultiple = () => {
-  return {
-    uiFramework: "custom-molecules-local",
-    componentPath: "UploadMultipleFiles",
-    props: {
-      maxFiles: 4
-    }
-  };
-};
-
-export const getRadioButtonGroup = buttons => {
-  return {
-    uiFramework: "custom-molecules",
-    componentPath: "RadioGroup",
-    props: {
-      buttons
-    }
-  };
-};
-export const getRadioGroupWithLabel = (label, labelKey, buttons) => {
+export const appCardsWithIcons = categories => {
   return {
     uiFramework: "custom-atoms",
     componentPath: "Container",
     props: {
-      alignItems: "center"
+      style: {
+        marginTop: "24px"
+      }
     },
-
-    children: {
-      div1: {
-        uiFramework: "custom-atoms",
-        componentPath: "Div",
-        gridDefination: {
-          xs: 12,
-          sm: 4
-        },
-        children: {
-          div: getLabel(label, labelKey, {
-            style: {
-              fontSize: "14px"
-            }
-          })
-        }
-      },
-      div2: {
-        uiFramework: "custom-atoms",
-        componentPath: "Div",
-        gridDefination: {
-          xs: 12,
-          sm: 8
-        },
-        children: {
-          div: getRadioButtonGroup(buttons)
-        }
-      }
-    }
-  };
-};
-
-export const getApplicationNoContainer = number => {
-  return {
-    uiFramework: "custom-atoms-local",
-    componentPath: "ApplicationNoContainer",
-    props: {
-      number
-    }
-  };
-};
-
-export const getContainerWithElement = (children, props = {}) => {
-  return {
-    uiFramework: "custom-atoms",
-    componentPath: "Div",
-    children,
-    props: {
-      ...props
-    }
-  };
-};
-
-export const transformById = (payload, id) => {
-  return (
-    payload &&
-    payload.reduce((result, item) => {
-      result[item[id]] = {
-        ...item
-      };
-
-      return result;
+    children: categories.reduce((acc, obj, index) => {
+      const { displayLabel, iconName, iconColorOne, iconColorTwo, apps } = obj;
+      acc[`app${index}`] = appCardWithIcon(
+        displayLabel,
+        iconName,
+        iconColorOne,
+        iconColorTwo,
+        apps
+      );
+      return acc;
     }, {})
-  );
-};
-
-export const getTranslatedLabel = (labelKey, localizationLabels) => {
-  let translatedLabel = null;
-  if (localizationLabels && localizationLabels.hasOwnProperty(labelKey)) {
-    translatedLabel = localizationLabels[labelKey];
-    if (
-      translatedLabel &&
-      typeof translatedLabel === "object" &&
-      translatedLabel.hasOwnProperty("message")
-    )
-      translatedLabel = translatedLabel.message;
-  }
-  return translatedLabel || labelKey;
-};
-
-export const getApprovalTextField = () => {
-  if (queryValue === "reject") {
-    return getTextField("Comments", "Enter rejection Comments", false, "");
-  } else if (queryValue === "cancel") {
-    return getTextField("Comments", "Enter Cancellation Comments", false, "");
-  } else {
-    return getTextField("Comments", "Enter Approval Comments", false, "");
-  }
-};
-
-export const getSubHeaderLabel = () => {
-  if (queryValue === "reject") {
-    return getCommonSubHeader("Rejection CheckList");
-  } else if (queryValue === "cancel") {
-    return {};
-  } else {
-    return getCommonSubHeader("Approve Checklist");
-  }
-};
-
-export const getFooterButtons = () => {
-  if (queryValue === "reject") {
-    return getLabel(
-      "REJECT APPLICATION",
-      "TL_REJECTION_CHECKLIST_BUTTON_REJ_APPL"
-    );
-  } else if (queryValue === "cancel") {
-    return getLabel("CANCEL TRADE LICENSE", "TL_COMMON_BUTTON_CANCEL_LICENSE");
-  } else {
-    return getLabel(
-      "APPROVE APPLICATION",
-      "TL_APPROVAL_CHECKLIST_BUTTON_APPRV_APPL"
-    );
-  }
-};
-
-export const onClickNextButton = () => {
-  switch (queryValue) {
-    case "reject":
-      return "/landing/mihy-ui-framework/tradelicence/acknowledgement?purpose=application&status=rejected&number=12345";
-    case "cancel":
-      return "/landing/mihy-ui-framework/tradelicence/acknowledgement?purpose=application&status=cancelled&number=12345";
-
-    default:
-      return "/landing/mihy-ui-framework/tradelicence/acknowledgement?purpose=approve&status=success&number=12345";
-  }
-};
-
-export const onClickPreviousButton = () => {
-  switch (queryValue) {
-    case "reject":
-      return "/landing/mihy-ui-framework/tradelicence/search-preview?role=approver&status=pending_approval";
-    case "cancel":
-      return "/landing/mihy-ui-framework/tradelicence/search-preview?role=approver&status=approved";
-    default:
-      return "/landing/mihy-ui-framework/tradelicence/search-preview?role=approver&status=pending_approval";
-  }
-};
-export const getFeesEstimateCard = (header, fees, extra) => {
-  return {
-    uiFramework: "custom-molecules",
-    componentPath: "FeesEstimateCard",
-    props: {
-      estimate: {
-        header,
-        fees,
-        extra
-      }
-    }
   };
-};
-
-const style = {
-  textfieldIcon: {
-    position: "relative",
-    top: "25px",
-    left: "-249%"
-  },
-  headerIcon: {
-    position: "relative",
-    bottom: "2px"
-  }
-};
-
-export const getIconStyle = key => {
-  return style[key];
-};
-
-export const showHideAdhocPopup = (state, dispatch) => {
-  let toggle = get(
-    state.screenConfiguration.screenConfig["pay"],
-    "components.adhocDialog.props.open",
-    false
-  );
-  dispatch(handleField("pay", "components.adhocDialog", "props.open", !toggle));
-};
-
-export const getButtonVisibility = (role, status, button) => {
-  if (status === "pending_payment" && button === "PROCEED TO PAYMENT")
-    return true;
-  if (
-    status === "pending_approval" &&
-    role === "approver" &&
-    button === "APPROVE"
-  )
-    return true;
-  if (
-    status === "pending_approval" &&
-    role === "approver" &&
-    button === "REJECT"
-  )
-    return true;
-  if (
-    status === "approved" &&
-    role === "approver" &&
-    button === "CANCEL TRADE LICENSE"
-  )
-    return true;
-  return false;
 };
